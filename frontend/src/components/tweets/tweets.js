@@ -1,40 +1,45 @@
 // src/components/tweets/tweets.js
 
-import React from 'react';
+import React, {useState, useEffect} from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 import { withRouter } from 'react-router-dom';
 import TweetBox from './tweet_box';
+import { fetchTweets } from '../../store/actions/tweet_actions';
 
-class Tweet extends React.Component {
-  constructor(props) {
-    super(props);
+const Tweet = () => {
+  const dispatch = useDispatch();
+  const [tweets, setTweets] = useState([])
 
-    this.state = {
-      tweets: []
-    }
-  }
+  const alltweets = useSelector(state => state.tweets);
+  const alltweetslist =  Object.values(alltweets)
 
-  componentWillMount() {
-    this.props.fetchTweets();
-  }
+  useEffect(() => {
+    dispatch(fetchTweets());
+    setTweets(alltweetslist[0])
+  },[])
 
-  componentWillReceiveProps(newState) {
-    this.setState({ tweets: newState.tweets });
-  }
+  // componentWillMount() {
+  //   this.props.fetchTweets();
+  // }
 
-  render() {
-    if (this.state.tweets.length === 0) {
+  // componentWillReceiveProps(newState){
+  //   this.setState({ tweets: newState.tweets });
+  // }
+
+
+    if (tweets.length === 0) {
       return (<div>There are no Tweets</div>)
     } else {
       return (
         <div>
           <h2>All Tweets</h2>
-          {this.state.tweets.map(tweet => (
+          {tweets.map((tweet) => (
             <TweetBox key={tweet._id} text={tweet.text} />
           ))}
         </div>
       );
     }
-  }
+
 }
 
 export default withRouter(Tweet);

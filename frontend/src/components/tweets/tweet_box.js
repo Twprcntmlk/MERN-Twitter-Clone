@@ -2,14 +2,14 @@
 
 import React from 'react';
 
-class TweetBox extends React.Component {
-  render() {
+const TweetBox = ({text}) => {
+
     return (
         <div>
-            <h3>{this.props.text}</h3>
+            <h3>{text}</h3>
         </div>
     );
-  }
-}
+
+    }
 
 export default TweetBox;
