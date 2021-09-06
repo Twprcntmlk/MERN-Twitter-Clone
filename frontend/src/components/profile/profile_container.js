@@ -1,5 +1,5 @@
 import { connect } from 'react-redux';
-import { fetchUserTweets } from '../../actions/tweet_actions';
+import { fetchUserTweets } from '../../store/actions/tweet_actions';
 import Profile from './profile';
 
 const mapStateToProps = (state) => {

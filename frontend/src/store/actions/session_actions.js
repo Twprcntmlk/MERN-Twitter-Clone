@@ -1,7 +1,8 @@
 // src/actions/session_actions.js
-
-import * as APIUtil from '../util/session_api_util';
+import axios from 'axios';
+import * as APIUtil from '../../util/session_api_util';
 import jwt_decode from 'jwt-decode';
+
 
 export const RECEIVE_CURRENT_USER = "RECEIVE_CURRENT_USER";
 export const RECEIVE_SESSION_ERRORS = "RECEIVE_SESSION_ERRORS";
@@ -30,28 +31,39 @@ export const logoutUser = () => ({
     type: RECEIVE_USER_LOGOUT
 });
 
+// const setAuthToken = (token) => {
+//     if (token) {
+//       axios.defaults.headers.common['Authorization'] = token;
+//     } else {
+//       delete axios.defaults.headers.common['Authorization'];
+//     }
+//   };
+
 // Upon signup, dispatch the approporiate action depending on which type of response we receieve from the backend
-export const signup = user => dispatch => (
-    APIUtil.signup(user).then(() => (
-        dispatch(receiveUserSignIn())
-    ), err => (
-        dispatch(receiveErrors(err.response.data))
-    ))
-);
+export const signup = (user) => async (dispatch) => {
+    try{
+        const res = await axios.post('/api/users/register', user);
+        if (res.status){
+            dispatch(receiveUserSignIn())
+        }
+    } catch (errors) {
+        dispatch(receiveErrors(errors.response.data))
+    }
+};
 
 // Upon login, set the session token and dispatch the current user. Dispatch errors on failure.
-export const login = user => dispatch => (
-    APIUtil.login(user).then(res => {
-        const { token } = res.data;
-        localStorage.setItem('jwtToken', token);
-        APIUtil.setAuthToken(token);
-        const decoded = jwt_decode(token);
-        dispatch(receiveCurrentUser(decoded))
-    })
-    .catch(err => {
-        dispatch(receiveErrors(err.response.data));
-    })
-)
+export const login = (user)=> async (dispatch) => {
+    try{
+        const res = await axios.post('/api/users/login', user);
+        const { token } = res.data
+            localStorage.setItem('jwtToken', token);
+            APIUtil.setAuthToken(token)
+            const decoded = await jwt_decode(token);
+            dispatch(receiveCurrentUser(decoded))
+    } catch (errors) {
+        dispatch(receiveErrors(errors.response.data));
+    }
+}
 
 // We wrote this one earlier
 export const logout = () => dispatch => {

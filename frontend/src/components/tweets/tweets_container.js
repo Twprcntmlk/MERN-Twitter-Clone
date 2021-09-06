@@ -1,7 +1,7 @@
 // src/components/tweets/tweets_container.js
 
 import { connect } from 'react-redux';
-import { fetchTweets } from '../../actions/tweet_actions';
+import { fetchTweets } from '../../store/actions/tweet_actions';
 import Tweets from './tweets';
 
 const mapStateToProps = (state) => {
